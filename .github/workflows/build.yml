@@ -21,15 +21,6 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
 
-      - name: Upload TrMenu
-        if: "github.event_name != 'pull_request'"
-        uses: marvinpinto/action-automatic-releases@master
-        with:
-          title: "TrMenu"
-          automatic_release_tag: "trmenu"
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          files: "build/libs/*.jar"
-          prerelease: true
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
