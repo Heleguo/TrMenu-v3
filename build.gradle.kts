@@ -65,7 +65,7 @@ subprojects {
             repoTabooLib = "http://mcitd.cn:8081/repository/releases/" // TODO
         }
         version {
-            taboolib = "6.2.0-beta4-dev"
+            taboolib = "6.2.0-beta5-dev"
             coroutines = null
         }
     }
