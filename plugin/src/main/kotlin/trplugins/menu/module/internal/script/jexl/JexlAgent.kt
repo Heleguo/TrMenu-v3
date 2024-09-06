@@ -3,7 +3,7 @@ package trplugins.menu.module.internal.script.jexl
 import com.google.common.collect.Maps
 import org.bukkit.Bukkit
 import taboolib.expansion.JexlCompiledScript
-import taboolib.expansion.defaultJexlCompiler
+import taboolib.expansion.JexlHelper
 import trplugins.menu.module.display.MenuSession
 import trplugins.menu.module.internal.data.Metadata
 import trplugins.menu.module.internal.script.Assist
