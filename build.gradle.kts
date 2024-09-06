@@ -62,10 +62,10 @@ subprojects {
 
             install("script-javascript")
 
-            repoTabooLib = "http://sacredcraft.cn:8081/repository/releases/"
+            repoTabooLib = "http://mcitd.cn:8081/repository/releases"
         }
         version {
-            taboolib = "6.2.0-beta5-dev"
+            taboolib = "6.2.0-beta4-dev"
             coroutines = null
         }
     }
@@ -73,7 +73,7 @@ subprojects {
     repositories {
         mavenCentral()
         maven("https://hub.spigotmc.org/nexus/content/groups/public/")
-        maven("http://sacredcraft.cn:8081/repository/releases") { isAllowInsecureProtocol = true }
+        maven("http://mcitd.cn:8081/repository/releases") { isAllowInsecureProtocol = true }
         maven("https://repo.codemc.io/repository/nms/")
         maven("https://repo.opencollab.dev/main/")
     }
