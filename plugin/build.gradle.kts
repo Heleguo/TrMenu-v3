@@ -52,10 +52,10 @@ dependencies {
     taboo(project(":common"))
     taboo(project(":api:receptacle"))
     taboo(project(":api:action"))
-    taboo("ink.ptms:um:1.0.8")
+    taboo("ink.ptms:um:1.1.2")
 
     // Libraries
-    compileOnly("org.apache.commons:commons-lang3:3.16.0")
+    compileOnly("org.apache.commons:commons-lang3:3.17.0")
 
     // Server Core
     compileOnly("ink.ptms.core:v12002:12002-minimize:mapped")
@@ -78,8 +78,6 @@ dependencies {
     compileOnly("net.skinsrestorer:skinsrestorer-api:15.0.0") { isTransitive = false }
     compileOnly("com.github.LoneDev6:api-itemsadder:3.6.3-beta-14") { isTransitive = false }
     compileOnly("org.geysermc.floodgate:api:2.2.3-SNAPSHOT") { isTransitive = false }
-    compileOnly("com.github.tritonmc.Triton:core:v3.9.5") { isTransitive = false }
-    compileOnly("com.github.tritonmc.Triton:api:v3.9.5") { isTransitive = false }
     compileOnly("de.tr7zw:item-nbt-api-plugin:2.12.2") { isTransitive = false }
     compileOnly("com.github.FrancoBM12:API-MagicCosmetics:2.2.7") { isTransitive = false }
     compileOnly("io.lumine:MythicLib-dist:1.6.2-SNAPSHOT") { isTransitive = false } // Required by MMOItems API
