@@ -45,6 +45,9 @@ object ItemSource {
             "HMCCosmetics", "HMC" -> HookPlugin.getHMCCosmetics().getItem(id)
             "MYTHICMOBS", "MM" -> HookPlugin.getMythicMobs().getItem(id)
             "AZUREFLOW", "AF" -> HookPlugin.getAzureFlow().getItem(id, session.placeholderPlayer)
+            "PXRPG", "PX" -> HookPlugin.getPxRpg().getItem(id, session.placeholderPlayer)
+            "NEXO" -> HookPlugin.getNexo().getItem(id)
+            "CRAFTENGINE", "CE" -> HookPlugin.getCraftEngine().getItem(id, session.placeholderPlayer)
             else -> CustomItemSourceEvent(name, id, session).also { it.call() }.source
         }
     }

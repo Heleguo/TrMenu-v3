@@ -5,7 +5,7 @@ plugins {
     java
     idea
     kotlin("jvm") version "2.1.0"
-    id("io.izzel.taboolib") version "2.0.22"
+    id("io.izzel.taboolib") version "2.0.27"
 }
 
 // 这段。一言难尽，但我不想动 (依托)
@@ -18,6 +18,15 @@ tasks.build {
         file?.copyTo(file("${project.layout.buildDirectory.get()}/libs/${project.name}-$version.jar"), true)
     }
     dependsOn(project(":plugin").tasks.build)
+}
+tasks.taboolibBuildApi {
+    doLast {
+        val plugin = project(":plugin")
+        val file =
+            file("${plugin.layout.buildDirectory.get()}/libs").listFiles()?.find { it.endsWith("plugin-$version-api.jar") }
+
+        file?.copyTo(file("${project.layout.buildDirectory.get()}/libs/${project.name}-$version-api.jar"), true)
+    }
 }
 
 subprojects {
@@ -55,20 +64,25 @@ subprojects {
                 Kether,
                 Metrics,
                 MinecraftChat,
-                XSeries
+                XSeries,
+                PtcObject
             )
+            repoTabooLib = "https://repo.aeoliancloud.com/repository/releases"
+//            repoTabooLib = project.repositories.mavenLocal().url.toString()
+            disableOnSkippedVersion = false
         }
         version {
-//            taboolib = "6.2.0-beta18"
-            taboolib = "6.2.2"
+            taboolib = "6.2.3-d4a5f0ea"
             coroutines = null
         }
     }
 
     repositories {
+        // 国内防屏蔽服务器
+        maven("https://repo.aeoliancloud.com/repository/releases") { isAllowInsecureProtocol = true }
         mavenCentral()
         maven("https://hub.spigotmc.org/nexus/content/groups/public/")
-        maven("http://sacredcraft.cn:8081/repository/releases") { isAllowInsecureProtocol = true }
+//        maven("http://sacredcraft.cn:8081/repository/releases") { isAllowInsecureProtocol = true }
         maven("https://repo.codemc.io/repository/nms/")
         maven("https://hub.spigotmc.org/nexus/content/groups/public/")
         maven("https://repo.opencollab.dev/main/")

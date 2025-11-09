@@ -10,6 +10,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.PlayerInventory
 import taboolib.common.platform.function.adaptPlayer
+import taboolib.common.platform.function.warning
 import taboolib.common.util.random
 import taboolib.library.xseries.XMaterial
 import taboolib.module.chat.Components
@@ -166,7 +167,13 @@ class Assist {
      * Internal - TabooLib Utils
      */
 
+    @Deprecated("Typo method name", ReplaceWith("getItemBuilder()"), DeprecationLevel.WARNING)
     fun getItemBuildr(): ItemBuilder {
+        warning("Assist#getItemBuildr() is deprecated, use getItemBuilder() instead.")
+        return ItemBuilder(XMaterial.STONE)
+    }
+
+    fun getItemBuilder(): ItemBuilder {
         return ItemBuilder(XMaterial.STONE)
     }
 
@@ -359,9 +366,26 @@ class Assist {
      * NBT
      */
 
+    /**
+     * @param isCustom 仅针对 1.20.5+, 是否读取为 CUSTOM_DATA 的 DataComponentType
+     */
+    fun getNBT(itemStack: ItemStack, string: String, isCustom: Boolean = true): String? {
+        val itemTag = itemStack.getItemTag(isCustom)
+        return itemTag[string]?.asString()
+    }
+
     fun getNBT(itemStack: ItemStack, string: String): String? {
         val itemTag = itemStack.getItemTag()
         return itemTag[string]?.asString()
+    }
+
+    /**
+     * @param isCustom 仅针对 1.20.5+, 是否读取为 CUSTOM_DATA 的 DataComponentType
+     */
+    fun setNBT(itemStack: ItemStack, key: String, value: String, isCustom: Boolean = true): ItemStack {
+        val itemTag = itemStack.getItemTag(isCustom)
+        itemTag[key] = ItemTagData(value)
+        return itemStack.also { itemTag.saveTo(it, isCustom) }
     }
 
     fun setNBT(itemStack: ItemStack, key: String, value: String): ItemStack {

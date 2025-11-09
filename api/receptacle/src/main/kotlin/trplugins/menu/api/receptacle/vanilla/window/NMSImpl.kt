@@ -1,5 +1,6 @@
 package trplugins.menu.api.receptacle.vanilla.window
 
+import net.minecraft.network.protocol.game.ClientboundSetCursorItemPacket
 import net.minecraft.server.v1_16_R3.*
 import org.bukkit.Material
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack
@@ -106,7 +107,7 @@ class NMSImpl : NMS() {
                     PacketPlayOutOpenWindow::class.java.unsafeInstance(),
                     "containerId" to windowId,
                     "type" to Containers::class.java.getProperty(type.vanillaId, true),
-                    "title" to CraftChatMessage.fromStringOrNull(title)
+                    "title" to CraftChatMessage.fromJSONOrString(title)
                 )
             }
             MinecraftVersion.isUniversal -> {
@@ -115,7 +116,7 @@ class NMSImpl : NMS() {
                     PacketPlayOutOpenWindow::class.java.unsafeInstance(),
                     "containerId" to windowId,
                     "type" to type.serialId,
-                    "title" to CraftChatMessage.fromStringOrNull(title)
+                    "title" to CraftChatMessage.fromJSONOrString(title)
                 )
             }
             version >= 11400 -> {
@@ -166,6 +167,15 @@ class NMSImpl : NMS() {
                 player.sendPacket(PacketPlayOutSetSlot(windowId, slot, toNMSCopy(itemStack)))
             }
         }
+        if (version >= 12104) {
+            try {
+                sendPacket(
+                    player,
+                    ClientboundSetCursorItemPacket::class.java.unsafeInstance(),
+                    "contents" to toNMSCopy(null)
+                )
+            } catch (_: Throwable) {}
+        }
     }
 
     override fun sendWindowsUpdateData(player: Player, windowId: Int, id: Int, value: Int) {
@@ -191,7 +201,7 @@ class NMSImpl : NMS() {
         }
     }
 
-    private fun toNMSCopy(itemStack: ItemStack?): net.minecraft.server.v1_16_R3.ItemStack? {
+    override fun toNMSCopy(itemStack: ItemStack?): net.minecraft.server.v1_16_R3.ItemStack? {
         return if (itemStack.isAir()) emptyItemStack else CraftItemStack.asNMSCopy(itemStack)
     }
 

@@ -1,5 +1,6 @@
 package trplugins.menu.module.display.item
 
+import org.bukkit.NamespacedKey
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
@@ -20,12 +21,20 @@ class Meta(
     val shiny: String,
     val flags: Array<ItemFlag>,
     val nbt: ItemTag?,
+    val tooltip: String?,
+    val itemModel: String?,
+    val hideTooltip: String,
+    val unbreakable: String,
+    val data: String,
 ) {
 
     private val isAmountDynamic = amount.toIntOrNull() == null
     private val isShinyDynamic = !shiny.matches(Regexs.BOOLEAN)
+    private val isHideTooltipDynamic = !hideTooltip.matches(Regexs.BOOLEAN)
     private val isNBTDynamic = nbt != null && Regexs.containsPlaceholder(nbt.toJsonSimplified())
-    val isDynamic = isAmountDynamic || isNBTDynamic || isShinyDynamic
+    private val isUnbreakableDynamic = !unbreakable.matches(Regexs.BOOLEAN)
+    private val isDataDynamic = data.toIntOrNull() == null
+    val isDynamic = isAmountDynamic || isNBTDynamic || isShinyDynamic || isHideTooltipDynamic
 
     fun amount(session: MenuSession): Int {
         return (if (isAmountDynamic) session.parse(amount) else amount).toDoubleOrNull()?.toInt() ?: 1
@@ -58,6 +67,42 @@ class Meta(
 
     fun hasAmount(): Boolean {
         return amount.isNotEmpty() || amount.toIntOrNull() != null
+    }
+
+    fun tooltipStyle(session: MenuSession, builder: ItemBuilder) {
+        if (tooltip.isNullOrEmpty()) {
+            return
+        }
+        val key = session.placeholderPlayer.evalScript(tooltip).asString().let { NamespacedKey.fromString(it) }
+        builder.tooltipStyle = key
+    }
+
+    fun itemModel(session: MenuSession, builder: ItemBuilder) {
+        if (itemModel.isNullOrEmpty()) {
+            return
+        }
+        val key = session.placeholderPlayer.evalScript(itemModel).asString().let { NamespacedKey.fromString(it) }
+        builder.itemModel = key
+    }
+
+    fun hideTooltip(session: MenuSession, builder: ItemBuilder) {
+        if (hideTooltip.toBoolean() || (isHideTooltipDynamic && session.placeholderPlayer.evalScript(hideTooltip).asBoolean())) {
+            builder.isHideTooltip = true
+        }
+    }
+
+    fun unbreakable(session: MenuSession, builder: ItemBuilder) {
+        if (unbreakable.toBoolean() || (isUnbreakableDynamic && session.placeholderPlayer.evalScript(unbreakable).asBoolean())) {
+            builder.isUnbreakable = true
+        }
+    }
+
+    fun data(session: MenuSession, builder: ItemBuilder) {
+        if (data.isEmpty()) {
+            return
+        }
+        val evalData = session.parse(amount).toIntOrNull() ?: session.placeholderPlayer.evalScript(data).asInt(0)
+        builder.damage = evalData
     }
 
 }

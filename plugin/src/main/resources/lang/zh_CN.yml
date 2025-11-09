@@ -8,7 +8,7 @@ Plugin-Update:
   - '&bhttps://www.spigotmc.org/resources/83120/'
 Plugin-Version:
   - '&8[&3Tr&bMenu&8] &b版本 &8| &3你正在使用社区维护版本:'
-  - '&bhttps://github.com/Dreeam-qwq/TrMenu'
+  - '&bhttps://github.com/Coderkuo/TrMenu'
 Plugin-Dependency-Hooked: '&8[&3Tr&bMenu&8] &6挂钩 &8| &7软依赖 &f{0} &7已兼容.'
 Plugin-Dependency-Abuse: '&8[&3Tr&bMenu&8] &6挂钩 &8| &4试图使用未挂钩插件 &c{0}'
 
@@ -17,7 +17,7 @@ Menu-Loader-Loading: '&8[&3Tr&bMenu&8] &6线程 &8| &3正在载入菜单...'
 Menu-Loader-Failed: '&8[&3Tr&bMenu&8] &c错误 &8| &4载入菜单 &c{0} &4过程中发生错误! 定位于: {1}'
 Menu-Loader-Reloaded: '&8[&3Tr&bMenu&8] &a良好 &8| &7自动重新载入菜单 &f{0} &8({1}ms)'
 Menu-Expansions-Header:
-  - '&8[&3Tr&bMenu&8] &7你必须安装 PAPI &f{0} &7拓展以使用此菜单.'
+  - '&8[&3Tr&bMenu&8] &7你必须安装 PAPI &f{0} &7个拓展以使用此菜单.'
   - type: JSON
     text: '&7请在安装后 [&3&n点击重载] &7拓展'
     args:
@@ -66,6 +66,7 @@ Command-Item-Description: '操作物品信息'
 Command-Convert-Description: '转换菜单类型'
 Command-Action-Description: '执行动作'
 Command-Sounds-Description: '试听 & 调试声音'
+Command-Data-Description: '修改 & 获取数据'
 
 Command-Open-Unknown-Menu: '&8[&3Tr&bMenu&8] &7未知菜单 &6{0} &7.'
 Command-Open-Unknown-Player: '&8[&3Tr&bMenu&8] &7玩家 &f{0} &7未在线.'
@@ -95,3 +96,6 @@ Command-Convert-Unknown-Menu: '&8[&3Tr&bMenu&8] &7未知菜单 &6{0} &7.'
 Command-Convert-Unknown-Type: '&8[&3Tr&bMenu&8] &7未知类型 &b{0} &7.'
 Command-Convert-Type-Already: '&8[&3Tr&bMenu&8] &7菜单 &6{0} &7的类型已经是 &b{1} &7了.'
 Command-Convert-Converted: '&8[&3Tr&bMenu&8] &7已将菜单 &6{0} &7的类型转换为 &b{1}&7.'
+Command-Data-Get: '&8[&3Tr&bMenu&8] &7获取玩家 &6{0} &7的 &6{1} &7数据 &6{2} &7: &f{3}'
+Command-Data-Invalid-Modify: '&8[&3Tr&bMenu&8] &c无效的修改类型'
+Dump-Info-Created: '&8[&3Tr&bMenu&8] &7已创建文件: &f{0}'

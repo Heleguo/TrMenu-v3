@@ -2,11 +2,11 @@ package trplugins.menu.module.conf
 
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.InventoryView
-import org.bukkit.inventory.ItemFlag
 import taboolib.common.platform.function.pluginId
 import taboolib.common.platform.function.warning
 import taboolib.common.util.asList
 import taboolib.library.configuration.ConfigurationSection
+import taboolib.library.xseries.XItemFlag
 import taboolib.module.configuration.Configuration
 import taboolib.module.configuration.Type
 import taboolib.module.lang.Language
@@ -42,6 +42,7 @@ import trplugins.menu.util.collections.IndivList
 import trplugins.menu.util.conf.Property
 import trplugins.menu.util.parseIconId
 import java.io.File
+import kotlin.jvm.optionals.getOrNull
 import kotlin.math.max
 
 /**
@@ -342,13 +343,29 @@ object MenuSerializer : ISerializer {
             val flags = if (inherit.contains(Property.ICON_DISPLAY_FLAGS)) {
                 def!!.display.meta.flags
             } else Property.ICON_DISPLAY_FLAGS.ofStringList(display).mapNotNull { flag ->
-                ItemFlag.entries.find { it.name.equals(flag, true) }
+//                ItemFlag.entries.find { it.name.equals(flag, true) }
+                XItemFlag.of(flag).getOrNull()?.get()
             }.toTypedArray()
             val nbt = if (inherit.contains(Property.ICON_DISPLAY_NBT)) {
                 def!!.display.meta.nbt
             } else {
                 ItemTag().also { Property.ICON_DISPLAY_NBT.ofMap(display).forEach { (key, value) -> it[key] = ItemTagData.toNBT(value) } }
             }
+            val tooltipStyle = if (inherit.contains(Property.ICON_DISPLAY_TOOLTIP)) {
+                def!!.display.meta.tooltip
+            } else Property.ICON_DISPLAY_TOOLTIP.ofString(display, "")
+            val itemModel = if (inherit.contains(Property.ICON_DISPLAY_ITEM_MODEL)) {
+                def!!.display.meta.itemModel
+            } else Property.ICON_DISPLAY_ITEM_MODEL.ofString(display, "")
+            val hideTooltip = if (inherit.contains(Property.ICON_DISPLAY_HIDE_TOOLTIP)) {
+                def!!.display.meta.hideTooltip
+            } else Property.ICON_DISPLAY_HIDE_TOOLTIP.ofString(display, "false")
+            val unbreakable = if (inherit.contains(Property.ICON_DISPLAY_UNBREAKABLE)) {
+                def!!.display.meta.unbreakable
+            } else Property.ICON_DISPLAY_UNBREAKABLE.ofString(display, "false")
+            val data = if (inherit.contains(Property.ICON_DISPLAY_DATA)) {
+                def!!.display.meta.data
+            } else Property.ICON_DISPLAY_DATA.ofString(display, "")
 
             // only for the subIcon
             val priority = Property.PRIORITY.ofInt(it, order)
@@ -385,7 +402,7 @@ object MenuSerializer : ISerializer {
                 if (def != null && inherit.contains(Property.ICON_DISPLAY_LORE) && lore.isEmpty()) def.display.lore
                 else CycleList(lore.map { Lore(line(it)) }),
                 // 图标附加属性
-                Meta(amount, shiny, flags, nbt)
+                Meta(amount, shiny, flags, nbt, tooltipStyle, itemModel, hideTooltip, unbreakable, data)
             )
 
             // i18n

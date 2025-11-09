@@ -31,25 +31,43 @@ Language:
     en_nz: 'en_US'
 
 Database:
+  # 使用旧版数据库储存
+  Use-Legacy-Database: false
+
   # Local: SQLITE
-  # External: SQL, MONGODB
+  # External: SQL
   Method: SQLITE
   Type:
     SQLite:
       file-name: data
-      table: npc
     SQL:
       host: localhost
       port: 3306
       user: root
       password: root
       database: test
-      table: trmenu_user_data
   Index:
     # UUID, USERNAME
     Player: USERNAME
 
+  # 新版数据库模块
+  SQL:
+    # 启用 MYSQL, 否则使用 SQLITE
+    enable: false
+    host: localhost
+    port: 3306
+    user: root
+    password: root
+    database: minecraft
+    prefix: trmenu
+
+  # 进服延迟加载数据
+  Join-Load-Delay: 40
+  # 全局数据跨服同步间隔
+  Global-Data-Sync: 200
+
 Loader:
+  Listen-Files: true
   Menu-Files:
     - 'plugins/CustomMenusFolder'
 
@@ -62,15 +80,16 @@ Menu:
       Default-Name-Color: "&7"
       Default-Lore-Color: "&7"
       Pre-Color: false
+      Head-Connect-Timeout: 500
+      Head-Read-Timeout: 2500
 
 Action:
   Using-Component: true
+  Title-Using-Component: true
   Inputer:
     Cancel-Words:
       - 'cancel|quit|end'
       - 'q'
-  Kether:
-    Allow-Tolerance-Parser: true
 
 
 Shortcuts:

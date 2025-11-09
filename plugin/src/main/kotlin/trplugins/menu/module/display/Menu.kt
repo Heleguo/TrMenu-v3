@@ -3,12 +3,15 @@ package trplugins.menu.module.display
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import taboolib.common.platform.function.adaptPlayer
+import taboolib.common.platform.function.console
 import taboolib.common.platform.function.pluginId
 import taboolib.common.platform.function.submit
+import taboolib.module.chat.component
 import taboolib.module.configuration.Configuration
 import taboolib.module.lang.Type
 import taboolib.platform.util.cancelNextChat
 import trplugins.menu.TrMenu
+import trplugins.menu.api.action.impl.menu.SetTitle
 import trplugins.menu.api.event.MenuOpenEvent
 import trplugins.menu.api.event.MenuPageChangeEvent
 import trplugins.menu.api.receptacle.provider.PlatformProvider
@@ -165,7 +168,10 @@ class Menu(
                     loadTitle(session)
                 }
             } else {
-                session.receptacle?.title(title, update = false)
+                val parseTitle = if (SetTitle.useComponent) {
+                    title.component().build().toRawMessage()
+                } else title
+                session.receptacle?.title(parseTitle, update = false)
             }
             if (BEDROCK_DELAY > 0 && PlatformProvider.isBedrockPlayer(viewer)) {
                 submit(async = Bukkit.isPrimaryThread(), delay = BEDROCK_DELAY) {
@@ -182,10 +188,20 @@ class Menu(
      */
     private fun loadTitle(session: MenuSession) {
         val title = settings.title(session)
-        session.receptacle?.title(title.next(session.id)?.let { session.parse(it) } ?: pluginId, update = false)
-        
+        session.receptacle?.title(title.next(session.id)?.let {
+            val parseTitle = session.parse(it)
+            if (SetTitle.useComponent) {
+                parseTitle.component().build().toRawMessage()
+            } else parseTitle
+        } ?: pluginId, update = false)
+
         val setTitle = {
-            session.receptacle?.title(title.next(session.id)?.let { session.parse(it) } ?: pluginId)
+            session.receptacle?.title(title.next(session.id)?.let {
+                val parseTitle = session.parse(it)
+                if (SetTitle.useComponent) {
+                    parseTitle.component().build().toRawMessage()
+                } else parseTitle
+            } ?: pluginId)
         }
 
         if (settings.titleUpdate > 0 && title.cyclable()) {
@@ -208,7 +224,7 @@ class Menu(
                         session.activeIcons.add(it)
                     } catch (e: Throwable) {
                         e.printStackTrace()
-                        println("ICON: ${it.id}")
+                        console().sendMessage("ICON: ${it.id}")
                     }
                 }
             }

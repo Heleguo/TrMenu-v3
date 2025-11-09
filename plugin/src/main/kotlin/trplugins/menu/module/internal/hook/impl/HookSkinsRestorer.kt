@@ -11,7 +11,7 @@ import trplugins.menu.module.internal.hook.HookAbstract
 class HookSkinsRestorer : HookAbstract() {
 
     private val skinsRestorer: SkinsRestorer? =
-        if (isHooked) {
+        if (plugin != null && plugin!!.isEnabled) {
             runCatching { SkinsRestorerProvider.get() }.getOrNull()
         } else {
             null
@@ -20,6 +20,11 @@ class HookSkinsRestorer : HookAbstract() {
             if (field == null) reportAbuse()
             return field
         }
+
+    override val isHooked by lazy {
+        if (plugin?.isEnabled == false) return@lazy false
+        return@lazy skinsRestorer != null
+    }
 
     fun getPlayerSkinTexture(name: String): String? {
         skinsRestorer?.let {

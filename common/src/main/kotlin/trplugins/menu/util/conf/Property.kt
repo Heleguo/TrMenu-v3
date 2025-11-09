@@ -209,6 +209,11 @@ enum class Property(val default: String, val regex: Regex) {
     ICON_DISPLAY_LORE("lore", "(display)?-?lores?"),
 
     /**
+     * 菜单图标显示 - 物品损伤值
+     */
+    ICON_DISPLAY_DATA("data", "(display)?-?data"),
+
+    /**
      * 菜单图标显示 - 物品数量
      */
     ICON_DISPLAY_AMOUNT("amount", "(amt|amount)s?"),
@@ -227,6 +232,26 @@ enum class Property(val default: String, val regex: Regex) {
      * 菜单图标显示 - NBT
      */
     ICON_DISPLAY_NBT("nbt", "nbts?"),
+
+    /**
+     * 菜单图标 - Tooltip Style
+     */
+    ICON_DISPLAY_TOOLTIP("tooltip", "tooltip(_style)?"),
+
+    /**
+     * 菜单图标 - ItemModel
+     */
+    ICON_DISPLAY_ITEM_MODEL("model", "(item)?_?model"),
+
+    /**
+     * 菜单图标 - ItemModel
+     */
+    ICON_DISPLAY_HIDE_TOOLTIP("hide_tooltip", "hide_?tool(tip)?"),
+
+    /**
+     * 菜单图标 - Unbreakable
+     */
+    ICON_DISPLAY_UNBREAKABLE("unbreakable", "unbreak(able)?"),
 
     /**
      * 菜单图标 - 子图标

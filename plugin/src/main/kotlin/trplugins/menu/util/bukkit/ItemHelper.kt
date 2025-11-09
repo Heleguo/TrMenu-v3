@@ -50,9 +50,9 @@ object ItemHelper {
                 if (type.size == 1) {
                     builder.finishing = {
                         try {
-                            (it.itemMeta as? BannerMeta)?.baseColor = DyeColor.valueOf(type[0].uppercase())
+                            (it.itemMeta as? BannerMeta)?.addPattern(Pattern(DyeColor.valueOf(type[0].uppercase()), PatternType.BASE))
                         } catch (e: Exception) {
-                            (it.itemMeta as? BannerMeta)?.baseColor = DyeColor.BLACK
+                            (it.itemMeta as? BannerMeta)?.addPattern(Pattern(DyeColor.BLACK, PatternType.BASE))
                         }
                     }
                 } else if (type.size == 2) {
@@ -92,7 +92,7 @@ object ItemHelper {
     fun fromJson(json: String): ItemStack? {
         try {
             // 自动判别老式/新式 NBT 标签
-            if (HookPlugin.getNBTAPI().isHooked && json.startsWith("{\"item\":")) {
+            if (json.startsWith("{\"item\":") && HookPlugin.getNBTAPI().isHooked) {
                 return HookPlugin.getNBTAPI().fromJson(json)
             }
             val parse = JsonParser().parse(json)

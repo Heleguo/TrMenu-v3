@@ -28,7 +28,7 @@ open class Item(
 
     internal val cache = object: HashMap<Int, ItemStack>() {
         override fun put(key: Int, value: ItemStack): ItemStack? {
-            if (value.type == XMaterial.PLAYER_HEAD.parseMaterial()) {
+            if (value.type == XMaterial.PLAYER_HEAD.get()) {
                 return super.put(key, value.clone())
             }
             return super.put(key, value)
@@ -87,6 +87,11 @@ open class Item(
             }
             meta.flags(this)
             meta.shiny(session, this)
+            meta.tooltipStyle(session, this)
+            meta.itemModel(session, this)
+            meta.hideTooltip(session, this)
+            meta.unbreakable(session, this)
+            meta.data(session, this)
 
             if (meta.hasAmount()) this.amount = meta.amount(session)
         }
@@ -129,7 +134,7 @@ open class Item(
         else {
             val current = cache[session.id]
             try {
-                val new = buildItem(current!!) { name = parsedName(session) }
+                val new = buildItem(current!!) { parsedName(session)?.let { name = it } }
                 cache[session.id] = new
             } catch (t: Throwable) {
                 t.stackTrace
