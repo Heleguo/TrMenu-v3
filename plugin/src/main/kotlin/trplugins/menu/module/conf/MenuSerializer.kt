@@ -42,6 +42,8 @@ import trplugins.menu.util.collections.IndivList
 import trplugins.menu.util.conf.Property
 import trplugins.menu.util.parseIconId
 import java.io.File
+import java.util.concurrent.ConcurrentHashMap
+import kotlin.collections.forEach
 import kotlin.jvm.optionals.getOrNull
 import kotlin.math.max
 
@@ -85,7 +87,7 @@ object MenuSerializer : ISerializer {
         // 读取菜单设置
         val settings = serializeSetting(conf, languages)
         if (!settings.succeed()) {
-            result.errors.addAll(settings.errors).also {
+            result.submitErrors(settings).also {
                 return result
             }
         }
@@ -93,21 +95,21 @@ object MenuSerializer : ISerializer {
         // 读取菜单布局
         val layout = serializeLayout(conf)
         if (!layout.succeed()) {
-            result.errors.addAll(layout.errors).also { return result }
+            result.submitErrors(layout).also { return result }
         }
         // 读取菜单图标
         val icons = serializeIcons(conf, languages, layout.asLayout())
         if (!icons.succeed()) {
-            result.errors.addAll(icons.errors).also {
+            result.submitErrors(icons).also {
                 return result
             }
         }
 
         // 读取菜单语言
-        val lang: Map<String, HashMap<String, taboolib.module.lang.Type>>? = if (languages.isEmpty()) null else {
-            val map = HashMap<String, HashMap<String, taboolib.module.lang.Type>>()
+        val lang: Map<String, ConcurrentHashMap<String, taboolib.module.lang.Type>>? = if (languages.isEmpty()) null else {
+            val map = mutableMapOf<String, ConcurrentHashMap<String, taboolib.module.lang.Type>>()
             languages.forEach { entry ->
-                val nodes = serializeLocaleNodes(entry.key, entry.value, HashMap())
+                val nodes = serializeLocaleNodes(entry.key, entry.value, ConcurrentHashMap())
                 if (nodes.isNotEmpty()) {
                     map[entry.key.lowercase()] = nodes
                 }
@@ -166,6 +168,7 @@ object MenuSerializer : ISerializer {
         val eventOpen = Property.EVENT_OPEN.ofList(events)
         val eventClose = Property.EVENT_CLOSE.ofList(events)
         val eventClick = Property.EVENT_CLICK.ofList(events)
+        val commandFakeOp = Property.COMMAND_FAKE_OP.ofBoolean(options, true)
 
         val settings = MenuSettings(
             CycleList(title),
@@ -197,7 +200,8 @@ object MenuSerializer : ISerializer {
                     )
                 }
             },
-            funs.map { ScriptFunction(it.key, it.value.toString()) }.toSet()
+            funs.map { ScriptFunction(it.key, it.value.toString()) }.toSet(),
+            commandFakeOp
         )
 
         // i18n
@@ -432,7 +436,7 @@ object MenuSerializer : ISerializer {
     // Method body taken from Taboolib, licensed under the MIT License
     //
     // Copyright (c) 2018 Bkm016
-    private fun serializeLocaleNodes(code: String, file: ConfigurationSection, nodes: HashMap<String, taboolib.module.lang.Type>, root: String = ""): HashMap<String, taboolib.module.lang.Type> {
+    private fun serializeLocaleNodes(code: String, file: ConfigurationSection, nodes: ConcurrentHashMap<String, taboolib.module.lang.Type>, root: String = ""): ConcurrentHashMap<String, taboolib.module.lang.Type> {
         file.getKeys(false).forEach { node ->
             val key = "$root$node"
             when (val obj = file[node]) {

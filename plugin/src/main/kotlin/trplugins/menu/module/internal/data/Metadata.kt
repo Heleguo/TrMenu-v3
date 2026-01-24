@@ -5,6 +5,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.metadata.FixedMetadataValue
 import taboolib.common.LifeCycle
+import taboolib.common.env.RuntimeDependency
 import taboolib.common.platform.Awake
 import taboolib.common.platform.ProxyPlayer
 import taboolib.common.platform.Schedule
@@ -34,6 +35,12 @@ import java.util.concurrent.ConcurrentHashMap
  * <meta> -> only lost when the server is shut down
  * <data> -> storable, (support MongoDB)
  */
+@RuntimeDependency(
+    value = "!org.slf4j:slf4j-jdk14:2.0.8",
+    test = "!org.slf4j_2_0_8.jul.JULServiceProvider",
+    relocate = ["!org.slf4j", "!org.slf4j_2_0_8"],
+    transitive = false
+)
 object Metadata {
 
     internal val meta = mutableMapOf<String, DataMap>()
@@ -49,6 +56,7 @@ object Metadata {
 
     // Copy in the Adyeshach
     val database by lazy {
+        if (!isUseLegacy) return@lazy null
         when (val db = SETTINGS.getString("Database.Method")?.uppercase()) {
             "LOCAL", "SQLITE", null -> DatabaseSQLite()
             "SQL" -> DatabaseSQL()
@@ -90,7 +98,7 @@ object Metadata {
 
     fun pushData(player: Player, dataMap: DataMap = getData(player)) {
         if (isUseLegacy) {
-            getLocalePlayer(player).let {
+            getLocalePlayer(player)?.let {
                 it.getConfigurationSection("TrMenu.Data")?.getKeys(true)?.forEach { key ->
                     if (!dataMap.data.containsKey(key)) {
                         it["TrMenu.Data.$key"] = null
@@ -98,7 +106,7 @@ object Metadata {
                 }
                 dataMap.data.forEach { (key, value) -> it["TrMenu.Data.$key"] = value }
             }
-            database.push(player)
+            database?.push(player)
         } else {
             dataMap.data.forEach { (key, value) ->
                 MetaDataDao.door.update(DataEntity.constructor(player, key, value?.toString() ?: ""))
@@ -106,15 +114,15 @@ object Metadata {
         }
     }
 
-    private fun getLocalePlayer(player: Player): Configuration {
-        return database.pull(player)
+    private fun getLocalePlayer(player: Player): Configuration? {
+        return database?.pull(player)
     }
 
     fun loadData(player: Player) {
         val map: MutableMap<String, Any?> = mutableMapOf()
 
         if (isUseLegacy) {
-            getLocalePlayer(player).getConfigurationSection("TrMenu.Data")?.let { section ->
+            getLocalePlayer(player)?.getConfigurationSection("TrMenu.Data")?.let { section ->
                 section.getKeys(true).forEach { key -> map[key] = section[key] }
             }
         } else {
